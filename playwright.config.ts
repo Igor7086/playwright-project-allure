@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { defineConfig, devices } from '@playwright/test';
 
 /**
@@ -22,9 +21,9 @@ export default defineConfig({
 	workers: process.env.CI ? 1 : undefined,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
 	reporter: [
-  ['list'],
-  ['allure-playwright']
-],
+    	['line'],                // стандартний консольний репортер
+    	['allure-playwright']    // додає Allure reporter
+  	],
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
 		baseURL: 'https://qacart-todo.herokuapp.com',
