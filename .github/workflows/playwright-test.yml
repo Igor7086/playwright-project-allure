@@ -34,11 +34,13 @@ jobs:
           path: gh-pages
 
       - name: Generate Allure report
-        uses: allure-framework/actions-allure-report@v1
-        with:
-          results: allure-results
-          report: allure-report
-          history: allure-history
+        run: npx allure generate allure-results --clean -o allure-report
+
+      - name: Copy Allure history
+        run: |
+          mkdir -p allure-history
+          cp -r gh-pages/* allure-history/ || true
+          cp -r allure-report/* allure-history/
 
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3.9.3
