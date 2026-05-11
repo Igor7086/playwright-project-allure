@@ -26,25 +26,21 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test
 
-      - name: Get Allure history
-        uses: actions/checkout@v3
-        continue-on-error: true
+      # ✅ Завантаження артефактів (скріншоти, відео, trace)
+      - name: Upload Playwright artifacts
+        if: always()   # навіть якщо тести впали
+        uses: actions/upload-artifact@v3
         with:
-          ref: gh-pages
-          path: gh-pages
+          name: playwright-artifacts
+          path: test-results
 
+      # Генерація Allure звіту
       - name: Generate Allure report
         run: npx allure generate allure-results --clean -o allure-report
-
-      - name: Copy Allure history
-        run: |
-          mkdir -p allure-history
-          cp -r gh-pages/* allure-history/ || true
-          cp -r allure-report/* allure-history/
 
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3.9.3
         with:
           github_token: ${{ secrets.TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure-history
+          publish_dir: allure-report
