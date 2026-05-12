@@ -1,5 +1,4 @@
 name: Playwright Tests
-
 on:
   push:
     branches: [master]
@@ -7,13 +6,10 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
 
@@ -30,7 +26,7 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test
 
-      # Upload raw artifacts
+      # ✅ Завантаження артефактів у GitHub Actions (архів)
       - name: Upload Playwright artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -38,33 +34,21 @@ jobs:
           name: playwright-artifacts
           path: test-results
 
-      # Generate Allure report
+      # Генерація Allure звіту
       - name: Generate Allure report
-        if: always()
         run: npx allure generate allure-results --clean -o allure-report
 
-      # Copy videos/screenshots/traces into report
+      # Копіювання артефактів у Allure report для деплою на Pages
       - name: Copy Playwright artifacts to report
         if: always()
         run: |
           mkdir -p allure-report/artifacts
           cp -r test-results/* allure-report/artifacts/ || true
 
-      # Deploy to GitHub Pages
+      # Деплой у GitHub Pages
       - name: Deploy report to GitHub Pages
-        if: always()
         uses: peaceiris/actions-gh-pages@v3.9.3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-report
-
-      # Print report URL in Actions UI
-      - name: Show Allure Report URL
-        if: always()
-        run: |
-          echo "Allure Report:"
-          echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
-
-          echo "## Allure Report" >> $GITHUB_STEP_SUMMARY
-          echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" >> $GITHUB_STEP_SUMMARY
