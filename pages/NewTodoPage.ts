@@ -20,7 +20,7 @@ export default class NewTodoPage {
 		await page.click(this.newTodoSubmit);
 	}
 
-	async addTodoUsingApi(request: APIRequestContext, user: User) {
-		await new TodoApi().addTodo(request, user);
+	async addTodoUsingApi(request: APIRequestContext, user: User, task: string) {
+		await new TodoApi().addTodo(request, user, task);
 	}
 }
