@@ -54,4 +54,5 @@ jobs:
           publish_dir: allure-report
 
       - name: Show Allure report URL   # Print direct link to Allure report in logs
-        run: echo "Report available at: https://<your-username>.github.io/<repo-name>/"
+        run: |
+          echo "Report available at: https://ihor7086.github.io/playwright-project-allure/"
