@@ -27,10 +27,11 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    {
-      name: 'headed', // Explicit headed project for local debugging
-      use: { ...devices['Desktop Chrome'], headless: false },
-    },
+	// headed only for local runs
+	...(process.env.CI ? [] : [{
+	name: 'headed',
+	use: { ...devices['Desktop Chrome'], headless: false },
+	}]),
   ],
 
   // Optional local dev server (disabled for CI)
