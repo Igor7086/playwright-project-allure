@@ -1,12 +1,12 @@
 import { APIRequestContext, BrowserContext, Page } from '@playwright/test';
 import User from '../models/User';
-import UserApi from '../apis/UserApi.ts';
+import UserApi from '../apis/UserApi';
 import config from '../playwright.config';
 
 export default class SignupPage {
-	async load(page: Page) {
-		await page.goto('/signup');
-	}
+  async load(page: Page) {
+	await page.goto(`${config.use?.baseURL}/todo/signup`);
+  }
 
 	private get firstNameInput() {
 		return `[data-testid=first-name]`;
@@ -41,34 +41,25 @@ export default class SignupPage {
 		await page.click(this.submitButton);
 	}
 
-	async signupUsingAPI(
-		request: APIRequestContext,
-		user: User,
-		context: BrowserContext
-	) {
-		const response = await new UserApi().signup(request, user);
+  async signupUsingAPI(
+    request: APIRequestContext,
+    user: User,
+    context: BrowserContext
+  ) {
+    const response = await new UserApi().signup(request, user);
+    const responseBody = await response.json();
 
-		const responseBody = await response.json();
-		const access_token = responseBody.access_token;
-		const firstName = responseBody.firstName;
-		const userID = responseBody.userID;
+    const access_token = responseBody.access_token;
+    const firstName = responseBody.firstName;
+    const userID = responseBody.userID;
 
-		await context.addCookies([
-			{
-				name: 'access_token',
-				value: access_token,
-				url: config.use?.baseURL,
-			},
-			{
-				name: 'firstName',
-				value: firstName,
-				url: config.use?.baseURL,
-			},
-			{
-				name: 'userID',
-				value: userID,
-				url: config.use?.baseURL,
-			},
-		]);
+    // ✅ cookies adding to the context
+    const baseURL = config.use?.baseURL;
+
+    await context.addCookies([
+      { name: 'access_token', value: access_token, url: baseURL },
+      { name: 'firstName', value: firstName, url: baseURL },
+      { name: 'userID', value: userID, url: baseURL },
+    ]);
 	}
 }

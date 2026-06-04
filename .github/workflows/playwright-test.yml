@@ -1,54 +1,57 @@
 name: Playwright Tests
+
 on:
   push:
-    branches: [master]
-  workflow_dispatch:
+    branches: [master]   # Trigger automatically on push to master branch
+  workflow_dispatch:      # Allow manual run from GitHub Actions UI
 
 permissions:
-  contents: write
+  contents: write         # Required for deploying to gh-pages branch
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+    env:
+      CI: true   # Run Playwright in headless mode in CI
 
-      - uses: actions/setup-node@v3
+    steps:
+      - uses: actions/checkout@v4   # Checkout repository code
+
+      - uses: actions/setup-node@v4 # Setup Node.js environment
         with:
           node-version: 20
 
-      - name: Install dependencies
+      - name: Install dependencies   # Install project dependencies
         run: npm ci
 
-      - name: Install Playwright Browsers
+      - name: Install Playwright Browsers   # Install Playwright browsers with dependencies
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests
-        run: npx playwright test
+      - name: Run Playwright tests   # Run Playwright tests with explicit base-url
+        run: npx playwright test --base-url=https://qacart-todo.herokuapp.com
 
-      # ✅ Завантаження артефактів у GitHub Actions (архів)
-      - name: Upload Playwright artifacts
+      - name: Upload Playwright artifacts   # Upload test artifacts for debugging
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-artifacts
           path: test-results
 
-      # Генерація Allure звіту
-      - name: Generate Allure report
+      - name: Generate Allure report   # Generate Allure report from test results
         run: npx allure generate ./allure-results -o ./allure-report
 
-      # Копіювання артефактів у Allure report для деплою на Pages
-      - name: Copy Playwright artifacts to report
+      - name: Copy Playwright artifacts to report   # Copy test artifacts into Allure report
         if: always()
         run: |
           mkdir -p allure-report/artifacts
           cp -r test-results/* allure-report/artifacts/ || true
 
-      # Деплой у GitHub Pages
-      - name: Deploy report to GitHub Pages
+      - name: Deploy report to GitHub Pages   # Deploy Allure report to gh-pages branch
         uses: peaceiris/actions-gh-pages@v3.9.3
         with:
           github_token: ${{ secrets.TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-report
+
+      - name: Show Allure report URL   # Print direct link to Allure report in logs
+        run: echo "Report available at: https://<your-username>.github.io/<repo-name>/"
