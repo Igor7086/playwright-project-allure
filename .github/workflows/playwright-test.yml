@@ -28,7 +28,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests   # Run Playwright tests with explicit base-url
-        run: npx playwright test --base-url=https://qacart-todo.herokuapp.com
+        run: npx playwright test
 
       - name: Upload Playwright artifacts   # Upload test artifacts for debugging
         if: always()

@@ -8,29 +8,32 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
+
   reporter: [
-    ['line'],                // standart console reporter
-    ['allure-playwright']    // adds Allure reporter
+    ['line'],               // Standard console reporter
+    ['allure-playwright'],  // Adds Allure reporter
   ],
+
   use: {
-    baseURL: 'https://qacart-todo.herokuapp.com',
-    headless: !!process.env.CI, // locally browser opens, in CI — headless
+    baseURL: 'https://qacart-todo.herokuapp.com', // ✅ Fixed base URL for all tests
+    headless: !!process.env.CI,                   // Headless in CI, headed locally
     trace: 'on-first-retry',
     video: 'on',
     screenshot: 'on',
   },
+
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    // 👇 additional project for explicit headed execution
     {
-      name: 'headed',
+      name: 'headed', // Explicit headed project for local debugging
       use: { ...devices['Desktop Chrome'], headless: false },
     },
   ],
-  // webServer can be enabled if needed
+
+  // Optional local dev server (disabled for CI)
   // webServer: {
   //   command: 'npm run start',
   //   url: 'http://127.0.0.1:3000',
