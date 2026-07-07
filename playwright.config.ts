@@ -1,13 +1,16 @@
 /// <reference types="node" />
 
 import { defineConfig, devices } from '@playwright/test';
+import { environments, Environment } from './config/environments';
+
+const env = (process.env.ENV || 'prod') as Environment;
 
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : undefined, // Number of threads
 
   reporter: [
     ['line'],               // Standard console reporter
@@ -15,29 +18,32 @@ export default defineConfig({
   ],
 
   use: {
-    baseURL: 'https://qacart-todo.herokuapp.com', // ✅ Fixed base URL for all tests
+    baseURL: environments[env], // Base URL for all tests
     headless: !!process.env.CI,                   // Headless in CI, headed locally
-    trace: 'on-first-retry',
-    video: 'on',
-    screenshot: 'on',
+    trace: 'on-first-retry', //If the test fails, open playwright show-trace and step
+    video: 'retain-on-failure',
+    screenshot: 'only-on-failure',
   },
 
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'] }
     },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] }
+    },
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] }
+    },
+
 	// headed only for local runs
-	...(process.env.CI ? [] : [{
-	name: 'headed',
-	use: { ...devices['Desktop Chrome'], headless: false },
-	}]),
+	// ...(process.env.CI ? [] : [{
+	// name: 'headed',
+	// use: { ...devices['Desktop Chrome'], headless: false },
+	// }]),
   ],
 
-  // Optional local dev server (disabled for CI)
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://127.0.0.1:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
 });

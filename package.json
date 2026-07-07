@@ -3,7 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:chromium": "playwright test --project=chromium",
+    "test:dev": "cross-env ENV=dev playwright test",
+    "test:stage": "cross-env ENV=stage playwright test",
+    "test:prod": "cross-env ENV=prod playwright test"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -12,6 +21,7 @@
     "@faker-js/faker": "^8.4.1",
     "@playwright/test": "^1.59.1",
     "@types/node": "^25.6.2",
-    "allure-playwright": "^3.7.2"
+    "allure-playwright": "^3.7.2",
+    "cross-env": "^10.1.0"
   }
 }
