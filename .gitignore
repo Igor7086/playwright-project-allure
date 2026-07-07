@@ -11,3 +11,7 @@ node_modules/
 allure-results/
 allure-report/
 allure-history/
+
+# IntelliJ IDEA
+.idea/
+*.iml
