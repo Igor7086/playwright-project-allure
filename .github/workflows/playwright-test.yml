@@ -137,8 +137,7 @@ jobs:
       ####################################################
 
       - name: Generate Allure Report
-        run: |
-          npx allure generate --clean ./allure-results --output ./allure-report
+        run: npm run allure:generate
 
       ####################################################
       # deploy
