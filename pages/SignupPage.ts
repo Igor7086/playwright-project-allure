@@ -1,4 +1,4 @@
-import { APIRequestContext, BrowserContext, Page } from '@playwright/test';
+import { APIRequestContext, BrowserContext, expect, Page } from '@playwright/test';
 import User from '../models/User';
 import UserApi from '../apis/UserApi';
 import config from '../playwright.config';
@@ -47,13 +47,18 @@ export default class SignupPage {
     context: BrowserContext
   ) {
     const response = await new UserApi().signup(request, user);
-    const responseBody = await response.json();
+	expect(response.ok()).toBeTruthy();
+    
+	const responseBody = await response.json();
 
     const access_token = responseBody.access_token;
     const firstName = responseBody.firstName;
     const userID = responseBody.userID;
 
-    // ✅ cookies adding to the context
+	user.setAccessToken(access_token); // token adding to the context
+  	user.setUserID(userID); // userID adding to the context
+
+    // cookies adding to the context
     const baseURL = config.use?.baseURL;
 
     await context.addCookies([
